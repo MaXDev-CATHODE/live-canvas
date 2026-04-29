@@ -1,27 +1,34 @@
 import type { LiveObject, LiveList, LiveMap } from "@liveblocks/client";
 
-// Shared types for layers
-export type LayerType = "StickyNote";
+export type LayerType = "StickyNote" | "Path";
 
-export type Layer = {
-  type: LayerType;
+export type StickyNoteLayer = {
+  type: "StickyNote";
   x: number;
   y: number;
   fill: string;
   text: string;
 };
 
-// Liveblocks v3 global type declarations
-// Hooks automatically resolve these types without generics
+export type PathLayer = {
+  type: "Path";
+  x: number;
+  y: number;
+  fill: string;
+  points: number[][]; // [x, y, pressure][]
+};
+
+export type Layer = StickyNoteLayer | PathLayer;
+
 declare global {
   interface Liveblocks {
-    // Presence: ephemeral per-user data (resets on disconnect)
     Presence: {
       cursor: { x: number; y: number } | null;
       info: { name: string; color: string };
+      pencilDraft: [x: number, y: number, pressure: number][] | null;
+      penColor: string | null;
     };
 
-    // Storage: persistent shared state (CRDT-backed)
     Storage: {
       layers: LiveMap<string, LiveObject<Layer>>;
       layerIds: LiveList<string>;

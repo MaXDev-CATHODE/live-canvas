@@ -38,6 +38,8 @@ function App() {
             name: NAMES[Math.floor(Math.random() * NAMES.length)],
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
           },
+          pencilDraft: null,
+          penColor: null,
         }}
         initialStorage={{
           layers: new LiveMap([]),
