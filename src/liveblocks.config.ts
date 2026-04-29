@@ -3,7 +3,7 @@ import { createRoomContext } from "@liveblocks/react";
 
 // Use public API key directly for the demo
 const client = createClient({
-  publicApiKey: "pk_prod_your_public_key_here", // We'll need a real one or use test one
+  publicApiKey: "pk_dev_rkZsvUsxx3Z3fnaTNQ8wi7zVJ2dT1nMhqfHr-pzE4BdMLvPpohSZoyw4qb_qCRBI",
 });
 
 export type LayerType = "StickyNote";
