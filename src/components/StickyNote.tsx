@@ -1,13 +1,13 @@
 import { memo } from "react";
-import { useMutation, useStorage } from "../liveblocks.config";
-import { motion } from "framer-motion";
+import { useMutation, useStorage } from "@liveblocks/react/suspense";
+import { motion } from "motion/react";
 
 type StickyNoteProps = {
   id: string;
 };
 
 export const StickyNote = memo(({ id }: StickyNoteProps) => {
-  const layer = useStorage((root) => root.layers[id]);
+  const layer = useStorage((root) => root.layers[id] ?? null);
 
   const updatePosition = useMutation(
     ({ storage }, x: number, y: number) => {
@@ -38,8 +38,7 @@ export const StickyNote = memo(({ id }: StickyNoteProps) => {
       drag
       dragMomentum={false}
       onDrag={(_, info) => {
-        // Optimistic local update via framer-motion is fine, 
-        // we sync to liveblocks continuously
+        // Optimistic local update via motion, synced to Liveblocks continuously
         updatePosition(layer.x + info.delta.x, layer.y + info.delta.y);
       }}
       initial={{ x: layer.x, y: layer.y, scale: 0.8, opacity: 0 }}

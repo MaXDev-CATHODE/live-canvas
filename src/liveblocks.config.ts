@@ -1,11 +1,6 @@
-import { createClient, LiveList, LiveMap, LiveObject } from "@liveblocks/client";
-import { createRoomContext } from "@liveblocks/react";
+import type { LiveObject, LiveList, LiveMap } from "@liveblocks/client";
 
-// Use public API key directly for the demo
-const client = createClient({
-  publicApiKey: "pk_dev_rkZsvUsxx3Z3fnaTNQ8wi7zVJ2dT1nMhqfHr-pzE4BdMLvPpohSZoyw4qb_qCRBI",
-});
-
+// Shared types for layers
 export type LayerType = "StickyNote";
 
 export type Layer = {
@@ -16,23 +11,22 @@ export type Layer = {
   text: string;
 };
 
-// Presence represents the properties that exist on every user in the Room
-type Presence = {
-  cursor: { x: number; y: number } | null;
-  info: { name: string; color: string };
-};
+// Liveblocks v3 global type declarations
+// Hooks automatically resolve these types without generics
+declare global {
+  interface Liveblocks {
+    // Presence: ephemeral per-user data (resets on disconnect)
+    Presence: {
+      cursor: { x: number; y: number } | null;
+      info: { name: string; color: string };
+    };
 
-// Storage represents the shared document that connects all users.
-type Storage = {
-  layers: LiveMap<string, LiveObject<Layer>>;
-  layerIds: LiveList<string>;
-};
+    // Storage: persistent shared state (CRDT-backed)
+    Storage: {
+      layers: LiveMap<string, LiveObject<Layer>>;
+      layerIds: LiveList<string>;
+    };
+  }
+}
 
-export const {
-  RoomProvider,
-  useMyPresence,
-  useOthers,
-  useUpdateMyPresence,
-  useStorage,
-  useMutation,
-} = createRoomContext<Presence, Storage>(client);
+export {};

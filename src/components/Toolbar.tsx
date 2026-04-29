@@ -1,4 +1,4 @@
-import { useMutation } from "../liveblocks.config";
+import { useMutation } from "@liveblocks/react/suspense";
 import type { Layer } from "../liveblocks.config";
 import { StickyNote } from "lucide-react";
 import { LiveObject } from "@liveblocks/client";

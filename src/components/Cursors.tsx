@@ -1,4 +1,4 @@
-import { useOthers } from "../liveblocks.config";
+import { useOthers } from "@liveblocks/react/suspense";
 import { Cursor } from "./Cursor";
 
 export const Cursors = () => {

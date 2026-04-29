@@ -1,4 +1,4 @@
-import { useUpdateMyPresence, useStorage } from "../liveblocks.config";
+import { useUpdateMyPresence, useStorage } from "@liveblocks/react/suspense";
 import { Cursors } from "./Cursors";
 import { Toolbar } from "./Toolbar";
 import { StickyNote } from "./StickyNote";
@@ -29,7 +29,7 @@ export const Canvas = () => {
       onPointerLeave={handlePointerLeave}
     >
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-neutral-900">
-        {/* Background grid or pattern could go here */}
+        {/* Background grid pattern */}
         <div className="w-full h-full opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4=')]"></div>
       </div>
       
