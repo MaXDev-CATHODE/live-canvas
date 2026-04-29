@@ -1,4 +1,4 @@
-import { useMutation, useHistory } from "@liveblocks/react/suspense";
+import { useMutation, useHistory, useRoom } from "@liveblocks/react/suspense";
 import type { Layer } from "../liveblocks.config";
 import { StickyNote, MousePointer2, Pencil, Undo2, Redo2 } from "lucide-react";
 import { LiveObject } from "@liveblocks/client";
@@ -14,31 +14,34 @@ type ToolbarProps = {
 
 export const Toolbar = ({ mode, setMode, penColor, setPenColor }: ToolbarProps) => {
   const { undo, redo, canUndo, canRedo } = useHistory();
+  const room = useRoom();
   
   const insertLayer = useMutation((
     { storage },
     layerType: "StickyNote",
     position: { x: number, y: number }
   ) => {
-    const liveLayers = storage.get("layers");
-    const liveLayerIds = storage.get("layerIds");
+    room.history.disable(() => {
+      const liveLayers = storage.get("layers");
+      const liveLayerIds = storage.get("layerIds");
 
-    if (liveLayers.size >= 100) return; // Prevent too many objects
+      if (liveLayers.size >= 100) return; // Prevent too many objects
 
-    const layerId = crypto.randomUUID();
-    const fill = COLORS[Math.floor(Math.random() * 5)]; // We only want the first 5 pastel colors for notes
+      const layerId = crypto.randomUUID();
+      const fill = COLORS[Math.floor(Math.random() * 5)]; // We only want the first 5 pastel colors for notes
 
-    const layer = new LiveObject<Layer>({
-      type: layerType,
-      x: position.x,
-      y: position.y,
-      fill: fill,
-      text: "",
+      const layer = new LiveObject<Layer>({
+        type: layerType,
+        x: position.x,
+        y: position.y,
+        fill: fill,
+        text: "",
+      });
+
+      liveLayerIds.push(layerId);
+      liveLayers.set(layerId, layer);
     });
-
-    liveLayerIds.push(layerId);
-    liveLayers.set(layerId, layer);
-  }, []);
+  }, [room]);
 
   return (
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-neutral-900/80 backdrop-blur-xl p-3 rounded-2xl border border-white/10 shadow-2xl z-50">
