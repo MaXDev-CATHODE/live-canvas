@@ -17,11 +17,30 @@ export const Canvas = () => {
   const others = useOthers();
   const myPresence = useSelf((me) => me.presence);
 
-  // Agresywne usuwanie znaczników Liveblocks jeśli CSS nie daje rady
+  // Agresywne usuwanie znaczników Liveblocks (nawet z Shadow DOM)
   useEffect(() => {
-    const interval = setInterval(() => {
-      document.querySelectorAll('a[href*="liveblocks"], [data-liveblocks-badge], .lb-badge').forEach(el => el.remove());
-    }, 500);
+    const hideBadges = () => {
+      const selectors = 'a[href*="liveblocks.io"], [data-liveblocks-badge], .lb-badge, [class*="liveblocks-"]';
+      
+      // Ukryj bezpośrednio
+      document.querySelectorAll(selectors).forEach(el => {
+        (el as HTMLElement).style.setProperty('display', 'none', 'important');
+      });
+
+      // Przeszukaj hosty Shadow DOM
+      const all = document.querySelectorAll('*');
+      for (let i = 0; i < all.length; i++) {
+        const el = all[i];
+        if (el.shadowRoot) {
+          const badge = el.shadowRoot.querySelector(selectors);
+          if (badge) {
+            (el as HTMLElement).style.setProperty('display', 'none', 'important');
+          }
+        }
+      }
+    };
+
+    const interval = setInterval(hideBadges, 300);
     return () => clearInterval(interval);
   }, []);
 
