@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { useUpdateMyPresence, useStorage, useMutation, useOthers, useSelf, useHistory } from "@liveblocks/react/suspense";
+import { useState, useCallback, useEffect } from "react";
+import { useUpdateMyPresence, useStorage, useMutation, useOthers, useSelf } from "@liveblocks/react/suspense";
 import { Cursors } from "./Cursors";
 import { Toolbar } from "./Toolbar";
 import { LayerComponent } from "./LayerComponent";
@@ -16,9 +16,32 @@ export const Canvas = () => {
   const layerIds = useStorage((root) => root.layerIds);
   const others = useOthers();
   const myPresence = useSelf((me) => me.presence);
-  
-  // Wpięcie historii dla globalnych skrótów Undo/Redo
-  const { undo, redo } = useHistory();
+
+  // Agresywne usuwanie znaczników Liveblocks jeśli CSS nie daje rady
+  useEffect(() => {
+    const interval = setInterval(() => {
+      document.querySelectorAll('a[href*="liveblocks"], [data-liveblocks-badge], .lb-badge').forEach(el => el.remove());
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Własna, globalna implementacja Undo - iteruje CRDT od tyłu by usunąć ostatnią stworzoną ścieżkę niezależnie od odświeżenia
+  const customUndo = useMutation(({ storage }) => {
+    const liveLayers = storage.get("layers");
+    const liveLayerIds = storage.get("layerIds");
+
+    for (let i = liveLayerIds.length - 1; i >= 0; i--) {
+      const layerId = liveLayerIds.get(i);
+      if (!layerId) continue;
+      
+      const layer = liveLayers.get(layerId);
+      if (layer && layer.get("type") === "Path") {
+        liveLayerIds.delete(i);
+        liveLayers.delete(layerId);
+        break; // Cofamy jedną warstwę na raz
+      }
+    }
+  }, []);
 
   // Wstawienie nowej narysowanej ścieżki do Storage
   const insertPath = useMutation((
@@ -91,10 +114,8 @@ export const Canvas = () => {
   // Byłoby to normalnie obsłużone przez useEffect, ale można podpiąć to do diva
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
-      if (e.shiftKey) {
-        redo();
-      } else {
-        undo();
+      if (!e.shiftKey) {
+        customUndo();
       }
     }
   };
