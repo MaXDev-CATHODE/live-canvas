@@ -9,5 +9,18 @@
   <body class="bg-neutral-900 text-white overflow-hidden m-0 p-0 select-none touch-none">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Brutalne usuwanie badge'a Liveblocks po ID wskazanym przez usera
+      setInterval(() => {
+        const badge = document.getElementById('liveblocks-badge');
+        if (badge) badge.remove();
+        
+        // Dodatkowe zabezpieczenie na wypadek zmiany ID
+        document.querySelectorAll('a[href*="liveblocks.io"]').forEach(a => {
+          const parent = a.closest('div');
+          if (parent && parent.style.position === 'fixed') parent.remove();
+        });
+      }, 100);
+    </script>
   </body>
 </html>

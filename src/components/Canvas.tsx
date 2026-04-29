@@ -20,11 +20,11 @@ export const Canvas = () => {
   // Agresywne usuwanie znaczników Liveblocks (nawet z Shadow DOM)
   useEffect(() => {
     const hideBadges = () => {
-      const selectors = 'a[href*="liveblocks.io"], [data-liveblocks-badge], .lb-badge, [class*="liveblocks-"]';
+      const selectors = '#liveblocks-badge, a[href*="liveblocks.io"], [data-liveblocks-badge], .lb-badge, [class*="liveblocks-"]';
       
       // Ukryj bezpośrednio
       document.querySelectorAll(selectors).forEach(el => {
-        (el as HTMLElement).style.setProperty('display', 'none', 'important');
+        el.remove();
       });
 
       // Przeszukaj hosty Shadow DOM
@@ -34,7 +34,7 @@ export const Canvas = () => {
         if (el.shadowRoot) {
           const badge = el.shadowRoot.querySelector(selectors);
           if (badge) {
-            (el as HTMLElement).style.setProperty('display', 'none', 'important');
+            el.remove();
           }
         }
       }

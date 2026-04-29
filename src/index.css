@@ -3,6 +3,7 @@
 /* Ukrycie logo Powered By Liveblocks w celu utrzymania koncepcji dema i immersji */
 a[href*="liveblocks.io"], 
 .liveblocks-badge, 
+#liveblocks-badge,
 [data-liveblocks-badge], 
 [class*="lb-badge"],
 [class*="liveblocks-"] {
